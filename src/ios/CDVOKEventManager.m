@@ -3,7 +3,7 @@
 //  Copyright (c) 2015年 EV2. All rights reserved.
 //
 
-#import "okcal.h"
+#import "CDVOKEventManager.h"
 #import <Cordova/CDV.h>
 #import <Cordova/CDVPlugin.h>
 #import <Cordova/CDVPluginResult.h>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.okmemo.cordova.okeventmanager"
+    version="0.1.0">
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
+    <name>OKEventManager</name>
+
+    <description>Integrate phonegap app with EventKit</description>
+
+    <author>Vincent Row</author>
+
+    <keywords>EventKit,IOS,event,alarm,reminder</keywords>
+
+    <license>MIT</license>
+
+    <js-module src="www/okEventManager.js" name="okEventManager">
+        <clobbers target="cordova.plugins.okEventManager" />
+    </js-module>
+
+    <!-- iOS -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="OKEventManager">
+                <param name="ios-package" value="CDVOKEventManager" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/CDVOKEventManager.h" />
+        <source-file src="src/ios/CDVOKEventManager.m" />
+    </platform>
+
+</plugin>

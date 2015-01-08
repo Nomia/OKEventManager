@@ -7,7 +7,9 @@
 #import <EventKit/EventKit.h>
 #import <Cordova/CDVPlugin.h>
 
-@interface OKEventManager : CDVPlugin {}
+@interface CDVOKEventManager : CDVPlugin {}
+
+@property (nonatomic, strong) EKEventStore *eventStore;
 
 - (void)createEventWithCal:(CDVInvokedUrlCommand*)command;
 - (void)deleteEventWithId:(CDVInvokedUrlCommand*)command;

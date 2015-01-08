@@ -2,11 +2,11 @@ var cordova = require('cordova');
 
 OKEventManager = function(){}
 
-OKEventManager.prototype.createCalendar = function(title,options,onsuccess,onerror){
-	cordova.exec(onsuccess, onerror, "OKEventManager", "createCalendar", [title,options]);
+OKEventManager.prototype.createCalendar = function(title,onsuccess,onerror){
+	cordova.exec(onsuccess, onerror, "OKEventManager", "createCalendar", [title]);
 };
 
-OKEventManager.prototype.createEventWithCal = function(calId,onsuccess,onerror){
+OKEventManager.prototype.createEventWithCal = function(calId,options,onsuccess,onerror){
 	cordova.exec(onsuccess, onerror, "OKEventManager", "createEventWithCal", [calId]);
 };
 

@@ -65,9 +65,15 @@
         event.endDate = [startDate dateByAddingTimeInterval:3600 * 2];
         
         BOOL allDay = [[options objectForKey:@"allDay"] boolValue];
-        
+
         if(allDay){
             event.allDay = YES;
+        }
+        
+        NSString *urlStr = [options objectForKey:@"url"];
+        if(urlStr){
+            NSURL *url = [NSURL URLWithString:urlStr];
+            event.URL = url;
         }
         
         NSInteger alarmInt = [[options objectForKey:@"alarmInt"] integerValue];
@@ -159,6 +165,12 @@
             
             if(allDay){
                 event.allDay = YES;
+            }
+            
+            NSString *urlStr = [options objectForKey:@"url"];
+            if(urlStr){
+                NSURL *url = [NSURL URLWithString:urlStr];
+                event.URL = url;
             }
             
             NSInteger alarmInt = [[options objectForKey:@"alarmInt"] integerValue];

@@ -81,7 +81,7 @@
         // save event to the callendar
         BOOL result = [self.eventStore saveEvent:event span:EKSpanThisEvent commit:YES error:&error];
         if (result) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[event eventIdentifier]];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         } else {
             NSLog(@"Error saving event: %@", error);
@@ -171,6 +171,7 @@
 
             if(![self.eventStore saveEvent:event span:EKSpanThisEvent commit:YES error:&error]){
                 NSLog(@"update event failed");
+                NSLog(@"%@",error);
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             }else{

@@ -7,7 +7,7 @@ OKEventManager.prototype.createCalendar = function(title,onsuccess,onerror){
 };
 
 OKEventManager.prototype.createEventWithCal = function(calId,options,onsuccess,onerror){
-	cordova.exec(onsuccess, onerror, "OKEventManager", "createEventWithCal", [calId]);
+	cordova.exec(onsuccess, onerror, "OKEventManager", "createEventWithCal", [calId,options]);
 };
 
 OKEventManager.prototype.updateEventWithId = function(eventId,options,onsuccess,onerror){

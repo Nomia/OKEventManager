@@ -11,4 +11,4 @@ Integrate phonegap app with EventKit(IOS only)
     
     cordova.plugins.okEventManager.requestAccess(success,failure);
 
-use this plugin at ease and at your own risk :>
+use this plugin at ease & at your own risk :>

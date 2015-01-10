@@ -41,8 +41,7 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }else{
         EKEvent *event = [EKEvent eventWithEventStore:eventStore];
-        // assign basic information to the event; location is optional
-//        event.calendar = calendar;
+        
         
         if(![calendar allowsContentModifications]){
             NSLog(@"The selected calendar does not allow modifications");
@@ -62,7 +61,14 @@
         // set the start date to the current date/time and the event duration to two hours
         NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startInt];
         event.startDate = startDate;
-        event.endDate = [startDate dateByAddingTimeInterval:3600 * 2];
+        
+        NSInteger endInt = [[options objectForKey:@"endInt"] integerValue];
+        //default duration
+        if(!endInt){
+            endInt = 3600 * 2;
+        }
+        
+        event.endDate = [startDate dateByAddingTimeInterval:endInt];
         
         BOOL allDay = [[options objectForKey:@"allDay"] boolValue];
 
@@ -79,7 +85,7 @@
         NSInteger alarmInt = [[options objectForKey:@"alarmInt"] integerValue];
         
         //give it a default alarm value
-        if(!alarmInt) alarmInt = 60;
+        if(!alarmInt) alarmInt = -60 * 5;
         EKAlarm *alarm = [EKAlarm alarmWithRelativeOffset:alarmInt];
         [event addAlarm:alarm];
         
@@ -234,20 +240,25 @@
         
         //source
         for (EKSource *source in eventStore.sources){
+            NSLog(@"%@",source);
             if (source.sourceType == EKSourceTypeCalDAV && [source.title isEqualToString:@"iCloud"]){
                 localSource = source;
                 break;
             }
         }
+    
         if( localSource == nil){
             for(EKSource *s in eventStore.sources){
+                NSLog(@"%@",s);
                 if(s.sourceType == EKSourceTypeLocal){
                     localSource = s;
                     break;
                 }
             }
         }
-        
+    
+        NSLog(@"source: %@",localSource);
+    
         calendar.source = localSource;
         
         NSString *calendarIdentifier = [calendar calendarIdentifier];

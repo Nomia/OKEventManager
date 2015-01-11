@@ -14,6 +14,7 @@
 
 //create event
 - (void)createEventWithCal:(CDVInvokedUrlCommand*)command {
+    [self.commandDelegate runInBackground:^{
     CDVPluginResult *pluginResult = nil;
     
     //properties of event e.g startDate, endDate, title, location
@@ -37,7 +38,7 @@
 
     if(!calendar){
         NSLog(@"calendar for id %@ doesn't exist",calendarIdentifier);
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"nonexists"];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"cal doesn't exist"];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }else{
         EKEvent *event = [EKEvent eventWithEventStore:eventStore];
@@ -66,9 +67,10 @@
         //default duration
         if(!endInt){
             endInt = 3600 * 2;
+            event.endDate = [startDate dateByAddingTimeInterval:endInt];
+        }else{
+            event.endDate = [NSDate dateWithTimeIntervalSince1970:endInt];
         }
-        
-        event.endDate = [startDate dateByAddingTimeInterval:endInt];
         
         BOOL allDay = [[options objectForKey:@"allDay"] boolValue];
 
@@ -102,10 +104,12 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
     }
+    }];
 }
 
 //delete event
 - (void)deleteEventWithId:(CDVInvokedUrlCommand*)command {
+    [self.commandDelegate runInBackground:^{
     CDVPluginResult *pluginResult = nil;
 
     //event id
@@ -113,20 +117,30 @@
 
     if(!self.eventStore) self.eventStore = [[EKEventStore alloc] init];
     EKEvent *event = [self.eventStore eventWithIdentifier:eventIdentifier];
-
-    NSError *error;
-    if(![self.eventStore removeEvent:event span:EKSpanThisEvent error:&error]){
+        
+    if(!event){
+        NSLog(@"event doesn't exist");
         //failed to delete event
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"event doesn't exist"];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }else{
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
-        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        NSError *error;
+        if(![self.eventStore removeEvent:event span:EKSpanThisEvent error:&error]){
+            NSLog(@"failed to delete event with error:%@",error);
+            //failed to delete event
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }else{
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
     }
+    }];
 }
 
 //update certain event
 - (void)updateEventWithId:(CDVInvokedUrlCommand*)command{
+    [self.commandDelegate runInBackground:^{
     CDVPluginResult *pluginResult = nil;
     //event id
     NSString *eventIdentifier = [command.arguments objectAtIndex:0];
@@ -188,8 +202,7 @@
 
 
             if(![self.eventStore saveEvent:event span:EKSpanThisEvent commit:YES error:&error]){
-                NSLog(@"update event failed");
-                NSLog(@"%@",error);
+                NSLog(@"update event failed with error: %@",error);
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             }else{
@@ -198,15 +211,18 @@
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             }
         }else{
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+            NSLog(@"event doesn't exist");
+            //failed to delete event
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"event doesn't exist"];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
     }
+    }];
 }
 
 //request permission to access ical
 - (void)requestAccess:(CDVInvokedUrlCommand*)command {
-    
+    [self.commandDelegate runInBackground:^{
     if(!self.eventStore) self.eventStore = [[EKEventStore alloc] init];
     [self.eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error)
      {
@@ -221,6 +237,7 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
          }
      }];
+    }];
 }
 
 - (NSString *)createCalendarWithTitle:(NSString *)title{
@@ -292,6 +309,7 @@
 
 //create calendar
 - (void)createCalendar:(CDVInvokedUrlCommand*)command {
+    [self.commandDelegate runInBackground:^{
     CDVPluginResult *pluginResult = nil;
     NSString *title = [command.arguments objectAtIndex:0];
     
@@ -352,6 +370,7 @@
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
     }
+    }];
 }
 
 @end
